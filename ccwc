@@ -7,6 +7,7 @@ def create_parser():
     parser = argparse.ArgumentParser(description='Unix command line tool wc')
     parser.add_argument("-c", "--byte_count", metavar="file_name", help="Counts the number of bytes in a file")
     parser.add_argument("-l", "--line_count", metavar="file_name", help="Counts the number of lines in a file")
+    parser.add_argument("-w", "--word_count", metavar="file_name", help="Counts the number of words in a file")
     return parser
 
 def byte_count(file_path):
@@ -23,6 +24,17 @@ def line_count(file_path):
         print(count, file_path)
     else:
         print(f"{file_path} does not exist in this root")
+        
+def word_count(file_path):
+    if os.path.exists(f"./{file_path}"):
+        count = 0
+        with open(f"./{file_path}", "r") as file:
+            for line in file:
+                words = line.split()
+                count += len(words)
+        print(count, file_path)
+    else:
+        print(f"{file_path} does not exist in this root")
     
 def main():
     parser = create_parser()
@@ -32,6 +44,8 @@ def main():
         byte_count(args.byte_count)
     elif args.line_count:
         line_count(args.line_count)
+    elif args.word_count:
+        word_count(args.word_count)
         
 if __name__ == "__main__":
     main()
