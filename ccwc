@@ -2,18 +2,24 @@
 import argparse
 import os
 
-def get_path(file_path):
-    return f"./{file_path}"
 
-def main():
+def create_parser():
     parser = argparse.ArgumentParser(description='Unix command line tool wc')
     parser.add_argument("-c", "--byte_count", metavar="file_name", help="Counts the number of bytes in a file")
+    return parser
+
+def byte_count(file_path):
+    file_size = os.path.getsize(f'./{file_path}')
+    print(file_size, file_path)
+
+def main():
+    parser = create_parser()
     args = parser.parse_args()
     
     if args.byte_count:
-        file_size = os.path.getsize(get_path(args.byte_count))
-        print(file_size, args.byte_count)
+        byte_count(args.byte_count)
     
         
 if __name__ == "__main__":
     main()
+    
