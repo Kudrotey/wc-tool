@@ -24,9 +24,6 @@ def line_count(file_path):
         with open(f"./{file_path}", "r") as file:
             count = sum(1 for line in file)
         return count
-    elif sys.stdin:
-        count = sum(1 for file in file_path)
-        return count
     else:
         return f"{file_path} does not exist in this root"
         
