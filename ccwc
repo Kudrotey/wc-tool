@@ -1,30 +1,34 @@
 #!/usr/bin/env python
 import argparse
 import os
-
+import sys
 
 def create_parser():
     parser = argparse.ArgumentParser(description='Unix command line tool wc')
     parser.add_argument("-c", "--byte_count", metavar="file_name", help="Counts the number of bytes in a file")
-    parser.add_argument("-l", "--line_count", metavar="file_name", help="Counts the number of lines in a file")
+    parser.add_argument("-l", "--line_count", metavar="file_name", help="Counts the number of lines in a file", nargs="?")
     parser.add_argument("-w", "--word_count", metavar="file_name", help="Counts the number of words in a file")
     parser.add_argument("-m", "--character_count", metavar="file_name", help="Counts the number of characters in a file")
+    parser.add_argument("default", help="Counts the number of bytes, lines and words in a file", nargs="?")
     return parser
 
 def byte_count(file_path):
     if os.path.exists(f"./{file_path}"):
         file_size = os.path.getsize(f'./{file_path}')
-        print(file_size, file_path)
+        return file_size
     else:
-        print(f"{file_path} does not exist in this root")
+        return f"{file_path} does not exist in this root"
         
 def line_count(file_path):
     if os.path.exists(f"./{file_path}"):
         with open(f"./{file_path}", "r") as file:
             count = sum(1 for line in file)
-        print(count, file_path)
+        return count
+    elif sys.stdin:
+        count = sum(1 for file in file_path)
+        return count
     else:
-        print(f"{file_path} does not exist in this root")
+        return f"{file_path} does not exist in this root"
         
 def word_count(file_path):
     if os.path.exists(f"./{file_path}"):
@@ -33,31 +37,42 @@ def word_count(file_path):
             for line in file:
                 words = line.split()
                 count += len(words)
-        print(count, file_path)
+        return count
     else:
-        print(f"{file_path} does not exist in this root")
-        
+        return f"{file_path} does not exist in this root"
+          
 def character_count(file_path):
     if os.path.exists(f"./{file_path}"):
         with open(f"./{file_path}", "r", encoding="utf-8") as file:
             content = file.read()
             count = len(content)
-        print(count, file_path)
+        return count
     else:
-        print(f"{file_path} does not exist in this root")
+        return f"{file_path} does not exist in this root"
+
+def default(file_path):
+    return [
+            line_count(file_path), 
+            word_count(file_path), 
+            byte_count(file_path), 
+            file_path
+        ]
     
 def main():
     parser = create_parser()
     args = parser.parse_args()
     
     if args.byte_count:
-        byte_count(args.byte_count)
-    elif args.line_count:
-        line_count(args.line_count)
-    elif args.word_count:
-        word_count(args.word_count)
-    elif args.character_count:
-        character_count(args.character_count)
+        print(byte_count(args.byte_count), args.byte_count)
+    if args.line_count:
+        print(line_count(args.line_count), args.line_count)
+    if args.word_count:
+        print(word_count(args.word_count), args.word_count)
+    if args.character_count:
+        print(character_count(args.character_count), args.character_count)
+    if args.default:
+        result = default(args.default)
+        print(result[0], result[1], result[2], result[3])
         
 if __name__ == "__main__":
     main()
